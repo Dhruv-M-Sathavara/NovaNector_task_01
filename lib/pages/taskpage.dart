@@ -12,11 +12,8 @@ class _TaskpageState extends State<Taskpage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 15),
+    return  Padding(
+          padding: EdgeInsets.symmetric(horizontal: 15,vertical: 10),
           child: Container(
             width: double.infinity,
             height: 150,
@@ -119,7 +116,7 @@ class _TaskpageState extends State<Taskpage> {
                                 width: 90,
                                 height: 28,
                                 decoration: BoxDecoration(
-                                  color: Colors.greenAccent,
+                                  color: Colors.grey,
                                   borderRadius: BorderRadius.circular(18),
                                 ),
                                 child: Padding(
@@ -150,8 +147,7 @@ class _TaskpageState extends State<Taskpage> {
               ),
             ),
           ),
-        ),
-      ),
-    );
+        );
+ 
   }
 }
