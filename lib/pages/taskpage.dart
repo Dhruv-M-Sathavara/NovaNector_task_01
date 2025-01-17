@@ -9,7 +9,7 @@ class Taskpage extends StatefulWidget {
 
 class _TaskpageState extends State<Taskpage> {
   bool isDone = false; // Moved the variable inside the stateful widget
-
+  
   @override
   Widget build(BuildContext context) {
     return  Padding(
@@ -40,7 +40,7 @@ class _TaskpageState extends State<Taskpage> {
                       color: Colors.amber,
                       image: DecorationImage(
                         image: NetworkImage(
-                            'https://img.freepik.com/free-vector/sport-equipment-concept_1284-13034.jpg'),
+                            'https://media.istockphoto.com/id/1303877287/vector/paper-checklist-and-pencil-flat-pictogram.jpg?s=612x612&w=0&k=20&c=NoqPzn94VH2Pm7epxF8P5rCcScMEAiGQ8Hv_b2ZwRjY='),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -74,7 +74,7 @@ class _TaskpageState extends State<Taskpage> {
                         ),
                         SizedBox(height: 5),
                         Text(
-                          'Subtitle',
+                          'Description',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
