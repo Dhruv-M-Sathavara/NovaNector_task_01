@@ -1,9 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:to_do/pages/home_page.dart';
 import 'package:to_do/pages/login.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:to_do/pages/taskpage.dart';
 import 'firebase_options.dart';
 
 
@@ -28,10 +26,10 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.white24),
         useMaterial3: true,
       ),
-      home: Home_page()
+      home: Hommepagge()
     );
   }
 }
