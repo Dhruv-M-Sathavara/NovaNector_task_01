@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:random_string/random_string.dart';
+import 'package:table_calendar/table_calendar.dart';
+import 'package:to_do/dbservice/dataoftask.dart';
 
 class Hommepagge extends StatefulWidget {
   const Hommepagge({super.key});
@@ -11,9 +14,19 @@ class _HommepaggeState extends State<Hommepagge> {
 
   bool Personal = true, Work = false, Shopping = false ,isDone = false;
 
+  TextEditingController title = TextEditingController();
+  TextEditingController subtitle = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
+      floatingActionButton: FloatingActionButton(onPressed: (){
+          OpenBox();
+      },
+      backgroundColor: Colors.blue.shade200,
+      child: Icon(Icons.add,color: Colors.white,),),
+
       body: Container(
         padding: EdgeInsets.only(top: 70),
         height: MediaQuery.of(context).size.height,
@@ -85,7 +98,7 @@ class _HommepaggeState extends State<Hommepagge> {
                         color: Colors.blue.shade200,
                         borderRadius: BorderRadius.circular(20)
                       ),
-                      child: Text("Work",style: TextStyle(
+                      child: Text("Workplace",style: TextStyle(
                         fontSize: 18,
                         color: Colors.black,
                         fontWeight: FontWeight.w500
@@ -101,7 +114,7 @@ class _HommepaggeState extends State<Hommepagge> {
                         
                       });
                     },
-                    child: Text("Work",
+                    child: Text("Workplace",
                     style: TextStyle(
                       fontSize: 20,
                     ),),
@@ -276,4 +289,175 @@ class _HommepaggeState extends State<Hommepagge> {
       ),
     );
   }
+
+
+OpenBox() {
+  DateTime? selectedDate = DateTime.now(); // Initialize selectedDate
+  TextEditingController dateController = TextEditingController();
+
+  return showDialog(
+    context: context,
+    builder: (BuildContext context) => AlertDialog(
+      content: SingleChildScrollView(
+        child: Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Icon(Icons.cancel),
+                  ),
+                  SizedBox(width: 60),
+                  Text(
+                    'ADD Task',
+                    style: TextStyle(
+                      color: Colors.blue.shade400,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.black,
+                    width: 2,
+                  ),
+                ),
+                child: TextField(
+                  controller: title,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Title',
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.black,
+                    width: 2,
+                  ),
+                ),
+                child: TextField(
+                  controller: subtitle,
+                  decoration: InputDecoration(
+                    hintText: 'Subtitle',
+                    border: InputBorder.none,
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              // Calendar Widget
+              TableCalendar(
+                firstDay: DateTime.utc(2000),
+                lastDay: DateTime.utc(2100),
+                focusedDay: selectedDate!,
+                calendarFormat: CalendarFormat.month,
+                selectedDayPredicate: (day) {
+                  return isSameDay(selectedDate, day);
+                },
+                onDaySelected: (selectedDay, focusedDay) {
+                  setState(() {
+                    selectedDate = selectedDay;
+                    dateController.text =
+                        "${selectedDay.day}-${selectedDay.month}-${selectedDay.year}";
+                  });
+                },
+                headerStyle: HeaderStyle(
+                  formatButtonVisible: false,
+                  titleCentered: true,
+                ),
+              ),
+              SizedBox(height: 20),
+              // Date Display Field
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.black,
+                    width: 2,
+                  ),
+                ),
+                child: TextField(
+                  controller: dateController,
+                  decoration: InputDecoration(
+                    hintText: 'Selected Due Date',
+                    border: InputBorder.none,
+                  ),
+                  readOnly: true, // Make the TextField non-editable
+                ),
+              ),
+              SizedBox(height: 20),
+              Center(
+                child: Container(
+                  width: 100,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    color: Colors.blue.shade300,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Center(
+                    child: GestureDetector(
+                      onTap: () {
+                        if (selectedDate != null) {
+                          print("Task Added with Due Date: $selectedDate");
+                          // Add your Firebase logic here
+                          Navigator.pop(context);
+                        } else {
+                          print("No date selected!");
+                        }
+                        
+                      },
+                      
+                      
+                      child: GestureDetector(
+                    onTap: () {
+                          if (selectedDate != null) {
+                            String id = randomAlphaNumeric(10);
+                            Map<String, dynamic> userTodo = {
+                              "title": title.text,
+                              "Subtitle": subtitle.text,
+                              "Due_Date": selectedDate.toString(),
+                              "id": id,
+                            };
+
+                            if (Personal) {
+                              DBService().addPersonalTask(userTodo, id);
+                            } else if (Work) {
+                              DBService().addWorkTask(userTodo, id);
+                            } else if (Shopping) {
+                              DBService().addShopping(userTodo, id);
+                            }
+
+                            Navigator.pop(context);
+                          } else {
+                            print("No date selected!");
+                          }
+},
+                        child: Text(
+                          "Add",
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+}
 }
