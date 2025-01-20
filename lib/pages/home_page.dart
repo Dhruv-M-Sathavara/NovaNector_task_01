@@ -31,6 +31,7 @@ class _HommepaggeState extends State<Hommepagge> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    
   }
 
   Widget getWork(){
@@ -58,7 +59,8 @@ class _HommepaggeState extends State<Hommepagge> {
                 child: Column(
                   children: [
                     Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                    Row(crossAxisAlignment: CrossAxisAlignment.center,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                       Container(child: Text("Due Date: ",style:TextStyle(color: Colors.red)),),
                         Container(
@@ -90,7 +92,7 @@ class _HommepaggeState extends State<Hommepagge> {
                                 )),
                             ),
                               Container(
-                                padding:const EdgeInsets.only(left: 60),
+                                padding:const EdgeInsets.only(left: 120),
                                 child: Checkbox(value: docsnap["Yes"], onChanged: (newvalue)async{
                                   
                                     await DBService().checkMethod(docsnap["id"], Personal?"Personal":Work?"Workspace" : "Shopping",newvalue!);
@@ -144,11 +146,16 @@ class _HommepaggeState extends State<Hommepagge> {
                         color: Colors.greenAccent,
                         borderRadius: BorderRadius.circular(20)
                       ),
-                      child: Text("Edit",style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500
-                      ),),
+                      child: GestureDetector(
+                        onTap: (){
+
+                        },
+                        child: Text("Edit",style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500
+                        ),),
+                      ),
                     
                     ),
                     Container(
@@ -328,8 +335,6 @@ class _HommepaggeState extends State<Hommepagge> {
       ),
     );
   }
-
-
 Future OpenBox() {
   DateTime? selectedDate = DateTime.now(); // Initialize selectedDate
   TextEditingController dateController = TextEditingController();
@@ -407,7 +412,7 @@ Future OpenBox() {
                   setState(() {
                     selectedDate = selectedDay;
                     dateController.text =
-                        "${selectedDay.day}-${selectedDay.month}-${selectedDay.year}";
+                        "${selectedDay.day}-${selectedDay.month}-${selectedDay.year}"; // Format date as dd-MM-yyyy
                   });
                 },
                 headerStyle: HeaderStyle(
@@ -447,50 +452,35 @@ Future OpenBox() {
                     child: GestureDetector(
                       onTap: () {
                         if (selectedDate != null) {
-                          print("Task Added with Due Date: $selectedDate");
-                          // Add your Firebase logic here
+                          String id = randomAlphaNumeric(10);
+                          Map<String, dynamic> userTodo = {
+                            "title": title.text,
+                            "Subtitle": subtitle.text,
+                            "Due_Date": "${selectedDate!.day}-${selectedDate!.month}-${selectedDate!.year}", // Save only the date
+                            "id": id,
+                            "Yes": false,
+                          };
+
+                          if (Personal) {
+                            DBService().addPersonalTask(userTodo, id);
+                          } else if (Work) {
+                            DBService().addWorkTask(userTodo, id);
+                          } else if (Shopping) {
+                            DBService().addShopping(userTodo, id);
+                          }
+
+                          title.clear();
+                          subtitle.clear();
+
                           Navigator.pop(context);
                         } else {
                           print("No date selected!");
                         }
-                        
                       },
-                      
-                      
-                      child: GestureDetector(
-                    onTap: () {
-                          if (selectedDate != null) {
-                            String id = randomAlphaNumeric(10);
-                            Map<String, dynamic> userTodo = {
-                              "title": title.text,
-                              "Subtitle": subtitle.text,
-                              "Due_Date": selectedDate.toString(),
-                              "id": id,
-                              "Yes":false,
-                            
-                            };
-
-                            if (Personal) {
-                              DBService().addPersonalTask(userTodo, id);
-                            } else if (Work) {
-                              DBService().addWorkTask(userTodo, id);
-                            } else if (Shopping) {
-                              DBService().addShopping(userTodo, id);
-                            }
-
-                            title.clear();
-                            subtitle.clear();
-
-                            Navigator.pop(context);
-                          } else {
-                            print("No date selected!");
-                          }
-},
-                        child: Text(
-                          "Add",
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
+                      child: Text(
+                        "Add",
+                        style: TextStyle(
+                          color: Colors.white,
                         ),
                       ),
                     ),
@@ -504,4 +494,5 @@ Future OpenBox() {
     ),
   );
 }
+
 }

@@ -104,7 +104,7 @@ class _LoginpageState extends State<Loginpage> {
             ElevatedButton(onPressed: (){
               if(_formkey.currentState!.validate()){
                 _formkey.currentState!.save();
-                signup(emailAddress, password);
+                signin(emailAddress, password);
               }
             }, child: islogin ? Text('Submit') :
             Text('Signup')),
