@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:random_string/random_string.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -12,10 +13,173 @@ class Hommepagge extends StatefulWidget {
 
 class _HommepaggeState extends State<Hommepagge> {
 
-  bool Personal = true, Work = false, Shopping = false ,isDone = false;
+  bool Personal = true, Work = false, Shopping = false ;
 
   TextEditingController title = TextEditingController();
   TextEditingController subtitle = TextEditingController();
+
+  Stream?todoStream;
+
+  load()async{
+    todoStream = await DBService().getTask(Personal?"Personal":Work?"Workspace" : "Shopping");
+    setState(() {
+      
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  Widget getWork(){
+    return StreamBuilder(stream: todoStream, builder: (context, AsyncSnapshot snapshot){
+      return snapshot.hasData?
+      Expanded(child: ListView.builder(itemCount: snapshot.data.docs.length, itemBuilder: (context,index){
+        DocumentSnapshot docsnap = snapshot.data.docs[index];
+        return               Padding(
+                padding: EdgeInsets.symmetric(horizontal: 15,vertical: 10),
+                child: Container(
+                  width: double.infinity,
+                  height: 230,
+                  decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.2),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: Offset(0, 2),
+                  )
+                ],
+                ),
+                child: Column(
+                  children: [
+                    Padding(padding: EdgeInsets.symmetric(vertical: 5)),
+                    Row(crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                      Container(child: Text("Due Date: ",style:TextStyle(color: Colors.red)),),
+                        Container(
+                      child: Text(docsnap["Due_Date"]),
+                    ),
+                    ],),
+                    SizedBox(height: 10,),
+                    Row(
+                      children: [ Container(
+                      padding: EdgeInsets.symmetric(horizontal: 5),
+                      height: 130,
+                      width: 100,
+                      child: Image(image: NetworkImage('https://media.istockphoto.com/id/1303877287/vector/paper-checklist-and-pencil-flat-pictogram.jpg?s=612x612&w=0&k=20&c=NoqPzn94VH2Pm7epxF8P5rCcScMEAiGQ8Hv_b2ZwRjY='),
+                        fit: BoxFit.cover,),
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                     children: [ 
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        
+                        child: Row(
+                          children: [
+                            Container(
+                              child: Text(docsnap["title"], style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                )),
+                            ),
+                              Container(
+                                padding:const EdgeInsets.only(left: 60),
+                                child: Checkbox(value: docsnap["Yes"], onChanged: (newvalue)async{
+                                  
+                                    await DBService().checkMethod(docsnap["id"], Personal?"Personal":Work?"Workspace" : "Shopping",newvalue!);
+                                  
+                                  setState((){
+
+                                  });
+                                }),
+                              )
+                          ],
+                          
+                        ),
+                      ),
+                      SizedBox(height: 5,),
+
+                      Container(
+                        padding: EdgeInsets.only(left: 10),
+                        child: Text(docsnap["Subtitle"]
+                            ,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                      ),
+                     ],
+                    )
+                    ]),
+                    SizedBox(height: 5,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                      Container(
+                      padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.shade200,
+                        borderRadius: BorderRadius.circular(20)
+                      ),
+                      child: Text("Priority",style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500
+                      ),),
+                    
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 22,vertical: 5),
+                      decoration: BoxDecoration(
+                        color: Colors.greenAccent,
+                        borderRadius: BorderRadius.circular(20)
+                      ),
+                      child: Text("Edit",style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500
+                      ),),
+                    
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 12,vertical: 5),
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 242, 93, 91),
+                        borderRadius: BorderRadius.circular(20)
+                      ),
+                      child: GestureDetector(
+                        onTap: (){
+                          Future.delayed(Duration(seconds: 2));
+                          DBService().Delete(docsnap["id"], Personal?"Personal":Work?"Workspace" : "Shopping");
+                        },
+                        child: Text("Delete",style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500
+                        ),),
+                      ),
+                    
+                    ),
+                    
+                      ]
+                    )
+                  ],
+                ),
+                ),
+              );
+      })):Center(child: CircularProgressIndicator());
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +200,7 @@ class _HommepaggeState extends State<Hommepagge> {
           children: [
               Container(
                 padding: EdgeInsets.only(left: 5),
-                child: Text("Hello, ",
+                child: Text("Hello,",
                 style: TextStyle(
                   fontSize: 30,
                   color: Colors.black
@@ -74,10 +238,11 @@ class _HommepaggeState extends State<Hommepagge> {
                     
                     ),
                   ):GestureDetector(
-                    onTap: () {
+                    onTap: () async{
                       Personal = true;
                       Work = false;
                       Shopping = false;
+                      await load();
                       setState(() {
                         
                       });
@@ -106,10 +271,11 @@ class _HommepaggeState extends State<Hommepagge> {
                     
                     ),
                   ):GestureDetector(
-                    onTap: () {
+                    onTap: () async{
                       Personal = false;
                       Work = true;
                       Shopping = false;
+                      await load();
                       setState(() {
                         
                       });
@@ -137,10 +303,11 @@ class _HommepaggeState extends State<Hommepagge> {
                     
                     ),
                   ):GestureDetector(
-                    onTap: () {
+                    onTap: () async{
                       Personal = false;
                       Work = false;
                       Shopping = true;
+                      await load();
                       setState(() {
                         
                       });
@@ -153,137 +320,9 @@ class _HommepaggeState extends State<Hommepagge> {
                  
                 ],
               ),
-              SizedBox(height: 20,),
               
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15,vertical: 10),
-                child: Container(
-                  width: double.infinity,
-                  height: 230,
-                  decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: Offset(0, 2),
-                  )
-                ],
-                ),
-                child: Column(
-                  children: [
-                    Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                    Container(
-                      child: Text("D&T"),
-                    ),
-                    SizedBox(height: 10,),
-                    Row(
-                      children: [ Container(
-                      padding: EdgeInsets.symmetric(horizontal: 5),
-                      height: 130,
-                      width: 100,
-                      child: Image(image: NetworkImage('https://media.istockphoto.com/id/1303877287/vector/paper-checklist-and-pencil-flat-pictogram.jpg?s=612x612&w=0&k=20&c=NoqPzn94VH2Pm7epxF8P5rCcScMEAiGQ8Hv_b2ZwRjY='),
-                        fit: BoxFit.cover,),
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                     children: [ 
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        
-                        child: Row(
-                          children: [
-                            Container(
-                              child: Text("Title", style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                )),
-                            ),
-                              Container(
-                                padding: EdgeInsets.only(left: 124),
-                                child: Checkbox(value: isDone, onChanged: (value){
-                                  setState(() {
-                                    isDone = !isDone;
-                                  });
-                                }),
-                              )
-                          ],
-                          
-                        ),
-                      ),
-                      SizedBox(height: 5,),
 
-                      Container(
-                        padding: EdgeInsets.only(left: 10),
-                        child: Text(
-                            "subtitle",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.grey.shade400,
-                            ),
-                          ),
-                      ),
-                     ],
-                    )
-                    ]),
-                    SizedBox(height: 10,),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                      Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
-                      decoration: BoxDecoration(
-                        color: Colors.blue.shade200,
-                        borderRadius: BorderRadius.circular(20)
-                      ),
-                      child: Text("Priority",style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500
-                      ),),
-                    
-                    ),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 22,vertical: 5),
-                      decoration: BoxDecoration(
-                        color: Colors.greenAccent,
-                        borderRadius: BorderRadius.circular(20)
-                      ),
-                      child: Text("Edit",style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500
-                      ),),
-                    
-                    ),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12,vertical: 5),
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 242, 93, 91),
-                        borderRadius: BorderRadius.circular(20)
-                      ),
-                      child: Text("Delete",style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500
-                      ),),
-                    
-                    ),
-                    
-                      ]
-                    )
-                  ],
-                ),
-                ),
-              )
-
-            
-
+              getWork(),
           ],
         ),
       ),
@@ -291,7 +330,7 @@ class _HommepaggeState extends State<Hommepagge> {
   }
 
 
-OpenBox() {
+Future OpenBox() {
   DateTime? selectedDate = DateTime.now(); // Initialize selectedDate
   TextEditingController dateController = TextEditingController();
 
@@ -427,6 +466,8 @@ OpenBox() {
                               "Subtitle": subtitle.text,
                               "Due_Date": selectedDate.toString(),
                               "id": id,
+                              "Yes":false,
+                            
                             };
 
                             if (Personal) {
@@ -436,6 +477,9 @@ OpenBox() {
                             } else if (Shopping) {
                               DBService().addShopping(userTodo, id);
                             }
+
+                            title.clear();
+                            subtitle.clear();
 
                             Navigator.pop(context);
                           } else {

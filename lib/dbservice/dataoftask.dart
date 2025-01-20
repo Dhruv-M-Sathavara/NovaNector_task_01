@@ -11,5 +11,17 @@ class DBService{
   Future addShopping(Map<String,dynamic> userTask, String id)async{
     return await FirebaseFirestore.instance.collection("Shopping").doc(id).set(userTask);
   }
+
+  Future<Stream<QuerySnapshot>>getTask(String task)async{
+    return await FirebaseFirestore.instance.collection(task).snapshots();
+  }
+
+  checkMethod(String id, String task, bool newvalue)async{
+    return await FirebaseFirestore.instance.collection(task).doc(id).update({"Yes":newvalue});  
+  }
+
+  Delete(String id,String task)async{
+    return await FirebaseFirestore.instance.collection(task).doc(id).delete();
+  }
 }
 
