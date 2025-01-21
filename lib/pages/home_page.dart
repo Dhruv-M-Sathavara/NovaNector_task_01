@@ -21,7 +21,7 @@ class _HommepaggeState extends State<Hommepagge> {
   Stream?todoStream;
 
   load()async{
-    todoStream = await DBService().getTask(Personal?"Personal":Work?"Workspace" : "Shopping");
+    todoStream = await DBService().getTask(Personal?"Personal":Work?"Workplace" : "Shopping");
     setState(() {
       
     });
@@ -95,7 +95,7 @@ class _HommepaggeState extends State<Hommepagge> {
                                 padding:const EdgeInsets.only(left: 120),
                                 child: Checkbox(value: docsnap["Yes"], onChanged: (newvalue)async{
                                   
-                                    await DBService().checkMethod(docsnap["id"], Personal?"Personal":Work?"Workspace" : "Shopping",newvalue!);
+                                    await DBService().checkMethod(docsnap["id"], Personal?"Personal":Work?"Workplace" : "Shopping",newvalue!);
                                   
                                   setState((){
 
@@ -167,7 +167,7 @@ class _HommepaggeState extends State<Hommepagge> {
                       child: GestureDetector(
                         onTap: (){
                           Future.delayed(Duration(seconds: 2));
-                          DBService().Delete(docsnap["id"], Personal?"Personal":Work?"Workspace" : "Shopping");
+                          DBService().Delete(docsnap["id"], Personal?"Personal":Work?"Workplace" : "Shopping");
                         },
                         child: Text("Delete",style: TextStyle(
                           fontSize: 15,
