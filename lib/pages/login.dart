@@ -20,11 +20,12 @@ class _LoginpageState extends State<Loginpage> {
   Widget build(BuildContext context) {
     return Scaffold( backgroundColor: Colors.white,
       body: SingleChildScrollView(scrollDirection:Axis.vertical, child:  Container(
+        padding: EdgeInsets.all(20),
         child: Column(
           children: [
             SizedBox(height: 20),
             Container(child: 
-            Image(image: NetworkImage('https://img.freepik.com/premium-vector/schedule-check-list-with-pencil-illustration_53562-8305.jpg?semt=ais_hybrid'),height: 300),
+            Image(image: AssetImage('assets/login_image.avif'),height: 300),
             ),
             Form(key:_formkey, child: Container(
               child: Column(children: [ !islogin ?
@@ -81,6 +82,7 @@ class _LoginpageState extends State<Loginpage> {
             TextFormField(
               key: ValueKey('password'),  
               style: TextStyle(fontSize:18,color:Colors.black),
+              obscureText: true,
               decoration: InputDecoration(
                 prefixIcon: Icon(Icons.password),
                 hintText: 'Comfirm Password',contentPadding: EdgeInsets.symmetric(horizontal: 15,vertical: 15),
@@ -101,18 +103,25 @@ class _LoginpageState extends State<Loginpage> {
               },
             ),
             SizedBox(height: 15),
-            ElevatedButton(onPressed: (){
-              if(_formkey.currentState!.validate()){
-                _formkey.currentState!.save();
-                signin(emailAddress, password);
-              }
-            }, child: islogin ? Text('Submit') :
-            Text('Signup')),
+                   ElevatedButton(
+                      onPressed: () {
+                        if (_formkey.currentState!.validate()) {
+                          _formkey.currentState!.save();
+                          signin(emailAddress, password);
+                        }
+                      },
+                      child: islogin ? Text('Submit',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),) : Text('Signup',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                        textStyle: TextStyle(fontSize: 18),
+                      ),
+                    ),
             TextButton(onPressed: (){
               setState(() {
                 islogin = !islogin;
               });
-            }, child: islogin ? Text('Dont have account') : Text('Already Signed In ? Login')),
+            }, child: islogin ? Text('Dont have account',style: TextStyle(color: Colors.blue),) : Text('Already Signed In ? Login',style: TextStyle(color: Colors.blue),)),
               ],),
             ))
             

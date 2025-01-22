@@ -61,7 +61,7 @@ Widget getWork() {
                         ],
                       ),
                 child: Padding(
-                  padding: const EdgeInsets.all(15.0),
+                  padding: const EdgeInsets.all(15),
                      child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -206,9 +206,12 @@ Widget getWork() {
                   );
                 },
               ),
-            ): Center(child: CircularProgressIndicator());
-    },
-  );
+            ): Padding(
+              padding: EdgeInsets.symmetric(vertical: 200),
+              child: Center(child: CircularProgressIndicator()),
+            );
+       },
+    );
 }
 
 @override
@@ -263,8 +266,7 @@ Widget build(BuildContext context) {
               buildCategoryButton("Workplace", Work, Colors.orange.shade300),
               buildCategoryButton("Shopping", Shopping, Colors.green.shade300),
             ],
-          ),
-          SizedBox(height: 20),
+          ), 
           getWork(),
         ],
       ),
