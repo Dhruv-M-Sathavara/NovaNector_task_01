@@ -27,5 +27,6 @@ class DBService{
   Future updateTask(String id, String task, Map<String, dynamic> updatedData, String text) async {
     return await FirebaseFirestore.instance.collection(task).doc(id).update(updatedData);
   }
+  
 }
 

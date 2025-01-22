@@ -34,469 +34,519 @@ class _HommepaggeState extends State<Hommepagge> {
     
   }
 
-  Widget getWork(){
-    return StreamBuilder(stream: todoStream, builder: (context, AsyncSnapshot snapshot){
-      return snapshot.hasData?
-      Expanded(child: ListView.builder(itemCount: snapshot.data.docs.length, itemBuilder: (context,index){
-        DocumentSnapshot docsnap = snapshot.data.docs[index];
-        return               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15,vertical: 10),
-                child: Container(
-                  width: double.infinity,
-                  height: 230,
-                  decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: Offset(0, 2),
-                  )
-                ],
-                ),
-                child: Column(
-                  children: [
-                    Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                      Container(child: Text("Due Date: ",style:TextStyle(color: Colors.red)),),
-                        Container(
-                      child: Text(docsnap["Due_Date"]),
-                    ),
-                    ],),
-                    SizedBox(height: 10,),
-                    Row(
-                      children: [ Container(
-                      padding: EdgeInsets.symmetric(horizontal: 5),
-                      height: 130,
-                      width: 100,
-                      child: Image(image: NetworkImage('https://media.istockphoto.com/id/1303877287/vector/paper-checklist-and-pencil-flat-pictogram.jpg?s=612x612&w=0&k=20&c=NoqPzn94VH2Pm7epxF8P5rCcScMEAiGQ8Hv_b2ZwRjY='),
-                        fit: BoxFit.cover,),
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                     children: [ 
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
-                        
-                        child: Row(
-                          children: [
-                            Container(
-                              child: Text(docsnap["title"], style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                )),
-                            ),
-                              Container(
-                                padding:const EdgeInsets.only(left: 120),
-                                child: Checkbox(value: docsnap["Yes"], onChanged: (newvalue)async{
-                                  
-                                    await DBService().checkMethod(docsnap["id"], Personal?"Personal":Work?"Workplace" : "Shopping",newvalue!);
-                                  
-                                  setState((){
-
-                                  });
-                                }),
-                              )
-                          ],
-                          
-                        ),
-                      ),
-                      SizedBox(height: 5,),
-
-                      Container(
-                        padding: EdgeInsets.only(left: 10),
-                        child: Text(docsnap["Subtitle"]
-                            ,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.grey.shade600,
-                            ),
-                          ),
-                      ),
-                     ],
-                    )
-                    ]),
-                    SizedBox(height: 5,),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                      Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+Widget getWork() {
+  return StreamBuilder(
+    stream: todoStream,
+    builder: (context, AsyncSnapshot snapshot) {
+      return snapshot.hasData
+          ? Expanded(
+              child: ListView.builder(
+                itemCount: snapshot.data.docs.length,
+                itemBuilder: (context, index) {
+                  DocumentSnapshot docsnap = snapshot.data.docs[index];
+                  return Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                    child: Container(
+                      width: double.infinity,
                       decoration: BoxDecoration(
-                        color: Colors.blue.shade200,
-                        borderRadius: BorderRadius.circular(20)
-                      ),
-                      child: Text("Priority",style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500
-                      ),),
-                    
-                    ),
-                    Container(
-                          padding: EdgeInsets.symmetric(horizontal: 22, vertical: 5),
-                          decoration: BoxDecoration(
-                            color: Colors.greenAccent,
-                            borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(15),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.1),
+                            spreadRadius: 5,
+                            blurRadius: 10,
+                            offset: Offset(0, 4),
                           ),
-                          child: GestureDetector(
-                            onTap: () {
-                              openEditBox(docsnap);
-                            },
-                            child: Text(
-                              "Edit",
+                        ],
+                      ),
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                     child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                             children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Due Date: ${docsnap["Due_Date"]}",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.red.shade400,
+                                      ),
+                                    ),
+                                    SizedBox(height: 5),
+                                      Text(
+                                      docsnap["title"],
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Checkbox(
+                                  value: docsnap["Yes"],
+                                  activeColor: Colors.blue.shade600,
+                                  onChanged: (newvalue) async {
+                                    await DBService().checkMethod(
+                                      docsnap["id"],
+                                      Personal
+                                          ? "Personal"
+                                          : Work
+                                              ? "Workplace"
+                                              : "Shopping",
+                                      newvalue!,
+                                    );
+                                    setState(() {});
+                                  },
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              docsnap["Subtitle"],
                               style: TextStyle(
                                 fontSize: 15,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
+                                color: Colors.grey.shade700,
                               ),
                             ),
-                          ),
+                            SizedBox(height: 15),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 15, vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: docsnap["Priority"] == "High"
+                                        ? Colors.red.shade200
+                                        : docsnap["Priority"] == "Medium"
+                                            ? Colors.orange.shade200
+                                            : Colors.green.shade200,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Text(
+                                    docsnap["Priority"] ?? "Low",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                ),
+                                Row(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        openEditBox(docsnap);
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 15, vertical: 8),
+                                        decoration: BoxDecoration(
+                                          color: Colors.blue.shade400,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: Text(
+                                          "Edit",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(width: 10),
+                                    GestureDetector(
+                                      onTap: () {
+                                        Future.delayed(
+                                            Duration(seconds: 2));
+                                        DBService().Delete(
+                                          docsnap["id"],
+                                          Personal
+                                              ? "Personal"
+                                              : Work
+                                                  ? "Workplace"
+                                                  : "Shopping",
+                                        );
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 15, vertical: 8),
+                                        decoration: BoxDecoration(
+                                          color: Colors.red.shade400,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: Text(
+                                          "Delete",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12,vertical: 5),
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 242, 93, 91),
-                        borderRadius: BorderRadius.circular(20)
                       ),
-                      child: GestureDetector(
-                        onTap: (){
-                          Future.delayed(Duration(seconds: 2));
-                          DBService().Delete(docsnap["id"], Personal?"Personal":Work?"Workplace" : "Shopping");
-                        },
-                        child: Text("Delete",style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500
-                        ),),
-                      ),
-                    
                     ),
-                    
-                      ]
-                    )
-                  ],
-                ),
-                ),
-              );
-      })):Center(child: CircularProgressIndicator());
-    });
-  }
+                  );
+                },
+              ),
+            ): Center(child: CircularProgressIndicator());
+    },
+  );
+}
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-
-      floatingActionButton: FloatingActionButton(onPressed: (){
-          OpenBox();
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    floatingActionButton: FloatingActionButton(
+      onPressed: () {
+        OpenBox();
       },
-      backgroundColor: Colors.blue.shade200,
-      child: Icon(Icons.add,color: Colors.white,),),
-
-      body: Container(
-        padding: EdgeInsets.only(top: 70),
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-              Container(
-                padding: EdgeInsets.only(left: 5),
-                child: Text("Hello,",
-                style: TextStyle(
-                  fontSize: 30,
-                  color: Colors.black
-                ),),
-              ),
-              SizedBox(height: 10,),
-
-              Container(
-                padding: EdgeInsets.only(left: 5),
-                child: Text("Let's the work begins!",style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.black54
-                ),),
-              ),
-
-              SizedBox(height: 30,),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                 Personal ? Material(
-                    elevation: 5,
-                    borderRadius: BorderRadius.circular(20),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
-                      decoration: BoxDecoration(
-                        color: Colors.blue.shade200,
-                        borderRadius: BorderRadius.circular(20)
-                      ),
-                      child: Text("Personal",style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500
-                      ),),
-                    
-                    ),
-                  ):GestureDetector(
-                    onTap: () async{
-                      Personal = true;
-                      Work = false;
-                      Shopping = false;
-                      await load();
-                      setState(() {
-                        
-                      });
-                    },
-                    child: Text("Personal",
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),),
-                  ),
-
-
-                  Work ? Material(
-                    elevation: 5,
-                    borderRadius: BorderRadius.circular(20),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
-                      decoration: BoxDecoration(
-                        color: Colors.blue.shade200,
-                        borderRadius: BorderRadius.circular(20)
-                      ),
-                      child: Text("Workplace",style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500
-                      ),),
-                    
-                    ),
-                  ):GestureDetector(
-                    onTap: () async{
-                      Personal = false;
-                      Work = true;
-                      Shopping = false;
-                      await load();
-                      setState(() {
-                        
-                      });
-                    },
-                    child: Text("Workplace",
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),),
-                  ),
-                  
-                  Shopping ? Material(
-                    elevation: 5,
-                    borderRadius: BorderRadius.circular(20),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
-                      decoration: BoxDecoration(
-                        color: Colors.blue.shade200,
-                        borderRadius: BorderRadius.circular(20)
-                      ),
-                      child: Text("Shopping",style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500
-                      ),),
-                    
-                    ),
-                  ):GestureDetector(
-                    onTap: () async{
-                      Personal = false;
-                      Work = false;
-                      Shopping = true;
-                      await load();
-                      setState(() {
-                        
-                      });
-                    },
-                    child: Text("Shopping",
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),),
-                  ),
-                 
-                ],
-              ),
-              
-
-              getWork(),
-          ],
-        ),
+      backgroundColor: Colors.blue.shade600,
+      child: Icon(
+        Icons.add,
+        color: Colors.white,
       ),
-    );
-  }
-Future OpenBox() {
-  DateTime? selectedDate = DateTime.now(); // Initialize selectedDate
-  TextEditingController dateController = TextEditingController();
-
-  return showDialog(
-    context: context,
-    builder: (BuildContext context) => AlertDialog(
-      content: SingleChildScrollView(
-        child: Container(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    ),
+    body: Container(
+      padding: EdgeInsets.only(top: 70),
+      height: MediaQuery.of(context).size.height,
+      width: MediaQuery.of(context).size.width,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 15),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Hello,",
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Text(
+                  "Let's get the work started!",
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 30),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Icon(Icons.cancel),
-                  ),
-                  SizedBox(width: 60),
-                  Text(
-                    'ADD Task',
-                    style: TextStyle(
-                      color: Colors.blue.shade400,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 20),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.black,
-                    width: 2,
-                  ),
-                ),
-                child: TextField(
-                  controller: title,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'Title',
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.black,
-                    width: 2,
-                  ),
-                ),
-                child: TextField(
-                  controller: subtitle,
-                  decoration: InputDecoration(
-                    hintText: 'Subtitle',
-                    border: InputBorder.none,
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
-              // Calendar Widget
-              TableCalendar(
-                firstDay: DateTime.utc(2000),
-                lastDay: DateTime.utc(2100),
-                focusedDay: selectedDate!,
-                calendarFormat: CalendarFormat.month,
-                selectedDayPredicate: (day) {
-                  return isSameDay(selectedDate, day);
-                },
-                onDaySelected: (selectedDay, focusedDay) {
-                  setState(() {
-                    selectedDate = selectedDay;
-                    dateController.text =
-                        "${selectedDay.day}-${selectedDay.month}-${selectedDay.year}"; // Format date as dd-MM-yyyy
-                  });
-                },
-                headerStyle: HeaderStyle(
-                  formatButtonVisible: false,
-                  titleCentered: true,
-                ),
-              ),
-              SizedBox(height: 20),
-              // Date Display Field
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.black,
-                    width: 2,
-                  ),
-                ),
-                child: TextField(
-                  controller: dateController,
-                  decoration: InputDecoration(
-                    hintText: 'Selected Due Date',
-                    border: InputBorder.none,
-                  ),
-                  readOnly: true, // Make the TextField non-editable
-                ),
-              ),
-              SizedBox(height: 20),
-              Center(
-                child: Container(
-                  width: 100,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    color: Colors.blue.shade300,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Center(
-                    child: GestureDetector(
-                      onTap: () {
-                        if (selectedDate != null) {
-                          String id = randomAlphaNumeric(10);
-                          Map<String, dynamic> userTodo = {
-                            "title": title.text,
-                            "Subtitle": subtitle.text,
-                            "Due_Date": "${selectedDate!.day}-${selectedDate!.month}-${selectedDate!.year}", // Save only the date
-                            "id": id,
-                            "Yes": false,
-                          };
-
-                          if (Personal) {
-                            DBService().addPersonalTask(userTodo, id);
-                          } else if (Work) {
-                            DBService().addWorkTask(userTodo, id);
-                          } else if (Shopping) {
-                            DBService().addShopping(userTodo, id);
-                          }
-
-                          title.clear();
-                          subtitle.clear();
-
-                          Navigator.pop(context);
-                        } else {
-                          print("No date selected!");
-                        }
-                      },
-                      child: Text(
-                        "Add",
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              buildCategoryButton("Personal", Personal, Colors.blue.shade300),
+              buildCategoryButton("Workplace", Work, Colors.orange.shade300),
+              buildCategoryButton("Shopping", Shopping, Colors.green.shade300),
             ],
+          ),
+          SizedBox(height: 20),
+          getWork(),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget buildCategoryButton(String title, bool isSelected, Color color) {
+  return GestureDetector(
+    onTap: () async {
+      if (title == "Personal") {
+        Personal = true;
+        Work = false;
+        Shopping = false;
+      } else if (title == "Workplace") {
+        Personal = false;
+        Work = true;
+        Shopping = false;
+      } else {
+        Personal = false;
+        Work = false;
+        Shopping = true;
+      }
+      await load();
+      setState(() {});
+    },
+    child: Material(
+      elevation: isSelected ? 5 : 0,
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        decoration: BoxDecoration(
+          color: isSelected ? color : Colors.grey.shade200,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          title,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: isSelected ? Colors.black : Colors.grey.shade600,
           ),
         ),
       ),
     ),
   );
 }
+
+
+Future OpenBox() {
+  DateTime? selectedDate = DateTime.now();
+  TextEditingController dateController = TextEditingController();
+  String selectedPriority = "Low";
+
+  return showDialog(
+    context: context,
+    builder: (BuildContext context) => AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      content: SingleChildScrollView(
+        child: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setDialogState) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Add Task',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Colors.blue.shade600,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Icon(
+                        Icons.close,
+                        color: Colors.red,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20),
+                TextField(
+                  controller: title,
+                  decoration: InputDecoration(
+                    labelText: 'Task Title',
+                    labelStyle: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey.shade700,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.blue.shade600, width: 2),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 15),
+                TextField(
+                  controller: subtitle,
+                  decoration: InputDecoration(
+                    labelText: 'Task Details',
+                    labelStyle: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey.shade700,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.blue.shade600, width: 2),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 15),
+                GestureDetector(
+                  onTap: () async {
+                    final pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: selectedDate ?? DateTime.now(),
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2100),
+                    );
+                    if (pickedDate != null) {
+                      setDialogState(() {
+                        selectedDate = pickedDate;
+                        dateController.text =
+                            "${pickedDate.day}-${pickedDate.month}-${pickedDate.year}";
+                      });
+                    }
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.grey.shade400,
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          dateController.text.isNotEmpty
+                              ? dateController.text
+                              : "Select Due Date",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: dateController.text.isNotEmpty
+                                ? Colors.black
+                                : Colors.grey.shade600,
+                          ),
+                        ),
+                        Icon(
+                          Icons.calendar_today,
+                          color: Colors.blue.shade600,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+                Text(
+                  "Select Priority:",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.grey.shade800,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    ChoiceChip(
+                      label: Text("High"),
+                      labelStyle: TextStyle(
+                        color: selectedPriority == "High" ? Colors.white : Colors.black,
+                      ),
+                      selected: selectedPriority == "High",
+                      onSelected: (bool selected) {
+                        setDialogState(() {
+                          selectedPriority = "High";
+                        });
+                      },
+                      selectedColor: Colors.red.shade400,
+                      backgroundColor: Colors.grey.shade200,
+                    ),
+                    ChoiceChip(
+                      label: Text("Medium"),
+                      labelStyle: TextStyle(
+                        color: selectedPriority == "Medium" ? Colors.white : Colors.black,
+                      ),
+                      selected: selectedPriority == "Medium",
+                      onSelected: (bool selected) {
+                        setDialogState(() {
+                          selectedPriority = "Medium";
+                        });
+                      },
+                      selectedColor: Colors.orange.shade400,
+                      backgroundColor: Colors.grey.shade200,
+                    ),
+                    ChoiceChip(
+                      label: Text("Low"),
+                      labelStyle: TextStyle(
+                        color: selectedPriority == "Low" ? Colors.white : Colors.black,
+                      ),
+                      selected: selectedPriority == "Low",
+                      onSelected: (bool selected) {
+                        setDialogState(() {
+                          selectedPriority = "Low";
+                        });
+                      },
+                      selectedColor: Colors.green.shade400,
+                      backgroundColor: Colors.grey.shade200,
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20),
+                Center(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue.shade600,
+                      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    onPressed: () {
+                      if (selectedDate != null) {
+                        String id = randomAlphaNumeric(10);
+                        Map<String, dynamic> userTodo = {
+                          "title": title.text,
+                          "Subtitle": subtitle.text,
+                          "Due_Date": "${selectedDate!.day}-${selectedDate!.month}-${selectedDate!.year}",
+                          "id": id,
+                          "Yes": false,
+                          "Priority": selectedPriority,
+                        };
+
+                        if (Personal) {
+                          DBService().addPersonalTask(userTodo, id);
+                        } else if (Work) {
+                          DBService().addWorkTask(userTodo, id);
+                        } else if (Shopping) {
+                          DBService().addShopping(userTodo, id);
+                        }
+
+                        title.clear();
+                        subtitle.clear();
+
+                        Navigator.pop(context);
+                      }
+                    },
+                    child: Text(
+                      "Add Task",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                 ),
+            ),
+          ),
+                ),
+           ],
+            );
+       },
+     ),
+  ),
+    ),
+  );
+}
+
 
 Future openEditBox(DocumentSnapshot docsnap) {
   DateTime? selectedDate = DateTime.now();
@@ -530,7 +580,7 @@ Future openEditBox(DocumentSnapshot docsnap) {
                 ],
               ),
               SizedBox(height: 20),
-              // Title Field
+            
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 decoration: BoxDecoration(
@@ -545,7 +595,7 @@ Future openEditBox(DocumentSnapshot docsnap) {
                 ),
               ),
               SizedBox(height: 20),
-              // Subtitle Field
+              
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 decoration: BoxDecoration(
