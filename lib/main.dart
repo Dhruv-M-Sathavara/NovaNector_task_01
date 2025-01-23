@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:to_do/dbservice/notification.dart';
 import 'package:to_do/pages/home_page.dart';
 import 'package:to_do/pages/login.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -15,6 +16,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await Notificationapi().initNotification();
   runApp(const MyApp());
 }
 

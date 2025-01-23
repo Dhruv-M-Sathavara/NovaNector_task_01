@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:random_string/random_string.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:to_do/dbservice/dataoftask.dart';
+import 'package:to_do/dbservice/notification.dart';
 
 class Hommepagge extends StatefulWidget {
   const Hommepagge({super.key});
@@ -504,13 +505,13 @@ Future OpenBox() {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    onPressed: () {
+                   onPressed: () {
                       if (selectedDate != null) {
                         String id = randomAlphaNumeric(10);
                         Map<String, dynamic> userTodo = {
                           "title": title.text,
                           "Subtitle": subtitle.text,
-                          "Due_Date": "${selectedDate!.day}-${selectedDate!.month}-${selectedDate!.year}",
+                          "Due_Date": "${selectedDate!.year}-${selectedDate!.month}-${selectedDate!.day} ${selectedDate!.hour}:${selectedDate!.minute}",
                           "id": id,
                           "Yes": false,
                           "Priority": selectedPriority,
@@ -524,12 +525,16 @@ Future OpenBox() {
                           DBService().addShopping(userTodo, id);
                         }
 
+                        // Schedule notifications for the task
+                        scheduleNotifications(userTodo);
+
                         title.clear();
                         subtitle.clear();
 
                         Navigator.pop(context);
                       }
                     },
+
                     child: Text(
                       "Add Task",
                       style: TextStyle(
@@ -539,10 +544,8 @@ Future OpenBox() {
                  ),
             ),
           ),
-                ),
-           ],
-            );
-       },
+                ),],
+            );},
      ),
   ),
     ),
@@ -697,5 +700,39 @@ Future openEditBox(DocumentSnapshot docsnap) {
     ),
   );
 }
+
+//notification function
+
+Future<void> scheduleNotifications(Map<String, dynamic> taskData) async {
+  final Notificationapi notificationApi = Notificationapi();
+  DateTime dueDate = DateTime.parse(taskData['Due_Date']);
+
+  
+  DateTime oneDayBefore = dueDate.subtract(Duration(days: 1));
+  DateTime oneHourBefore = dueDate.subtract(Duration(hours: 1));
+
+  
+  DateTime now = DateTime.now();
+
+  
+  if (oneDayBefore.isAfter(now)) {
+    Future.delayed(oneDayBefore.difference(now), () {
+      notificationApi.showLocalNotification(
+        "Task Reminder: ${taskData['title']}",
+        "Bas ek din baki hai khatam kar yaar!",
+      );
+    });
+  }
+
+  
+  if (oneHourBefore.isAfter(now)) {
+    Future.delayed(oneHourBefore.difference(now), () {
+      notificationApi.showLocalNotification(
+        "Task Reminder: ${taskData['title']}",
+        "Only 1 hour left to complete your task!",
+      );
+    }); }
+}
+
 
 }
